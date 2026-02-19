@@ -4,6 +4,8 @@
             "priority": 1,
             "color": "red",
             "keywords": [
+                "urgent",
+                "immediate",
                 "blocker",
                 "showstopper",
                 "critical path",

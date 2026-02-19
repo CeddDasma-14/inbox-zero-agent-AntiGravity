@@ -23,25 +23,34 @@ async function seedInbox() {
 
         // 2. Define Test Emails
         const testEmails = [
-            {
-                subject: "URGENT: Q3 Budget Review Needed TODAY",
-                body: "Hi Team,\n\nThe budget review meeting has been moved up to 4 PM today. Please review the attached spreadsheet and send me your feedback by 3 PM latest.\n\nThanks,\nBoss",
-                title: "Work Email"
-            },
-            {
-                subject: "Tech Weekly: The Future of AI Agents",
-                body: "This week's top stories:\n1. How AI Agents are changing productivity.\n2. New advancements in LLMs.\n3. Javascript vs TypeScript in 2026.\n\nRead more at our blog.",
-                title: "Newsletter"
-            },
-            {
-                subject: "CONGRATULATIONS! You've won a $1000 Gift Card!",
-                body: "You have been selected as our lucky winner! Click the link below to claim your prize immediately before it expires.\n\n[Claim Now]",
-                title: "Simulated Spam"
-            }
+            // --- EMERGENCY KEYWORD OVERRIDES (Test Keyword Logic) ---
+            { subject: "CRITICAL: Database Outage", body: "The production database is down. We are losing $500/minute. Fix this now.", title: "EMERGENCY_OVERRIDE" },
+            { subject: "incident report: core-api-v1", body: "We found a major vulnerability in the v1 API. Blocker for the release.", title: "EMERGENCY_OVERRIDE" },
+
+            // --- AI CLASSIFICATION: URGENT / ACTION (Test AI Logic) ---
+            { subject: "Legal: Contract Signature Required", body: "Please sign the partnership agreement for the new AI project by noon.", title: "URGENT_P0" },
+            { subject: "Approval for February Ad Spend", body: "Our marketing team needs your sign-off on the $5k budget increase for Feb.", title: "ACTION_REQUIRED" },
+            { subject: "Deliverable sign-off: UX Mockups", body: "The designs for the new dashboard are ready. Can we get your green light?", title: "ACTION_REQUIRED" },
+
+            // --- CALENDAR SYNC (Test Calendar Integration) ---
+            { subject: "Availability request: Sync about the demo", body: "I'd love to chat about the demo next week. When are you free for 30 min?", title: "CALENDAR_SYNC" },
+            { subject: "Can we reschedule our touch base?", body: "Something came up. Can we meet on Wednesday or Thursday instead?", title: "CALENDAR_SYNC" },
+
+            // --- LOW SIGNAL (Test "Move to Review Later" Logic) ---
+            { subject: "Weekly Newsletter: The AI Revolution", body: "Inside: How autonomous agents are changing the workforce in 2026.", title: "LOW_SIGNAL" },
+            { subject: "Your Monthly SaaS Insights Digest", body: "Check out your platform usage statistics and efficiency score for January.", title: "LOW_SIGNAL" },
+            { subject: "Waitlist: New Developer Tools Beta", body: "You're on the list! We'll notify you when your access is ready.", title: "LOW_SIGNAL" },
+            { subject: "Upcoming Webinar: Next.js 16 Preview", body: "Reserve your spot to see the latest features in the Next.js ecosystem.", title: "LOW_SIGNAL" },
+            { subject: "Product Roundup: February Updates", body: "We've added 10 new integrations and a sleek dark mode. Read more here.", title: "LOW_SIGNAL" },
+
+            // --- SECURITY & STANDARD ---
+            { subject: "SECURITY: Unusual login from Tokyo", body: "Account alert: A new device just logged in from an unrecognized IP in Japan.", title: "SECURITY_RISK" },
+            { subject: "Don't forget the team lunch today!", body: "Pizza is arriving at 12:30. See you in the common area!", title: "Standard" },
+            { subject: "Question regarding the coffee machine", body: "Hey! Do you know how to descale the office Jura? It's blinking red.", title: "Standard" }
         ];
 
         // 3. Send Emails
-        console.log("\n--- SENDING EMAILS ---\n");
+        console.log(`\n--- FINAL VERIFICATION: SENDING ${testEmails.length} TEST EMAILS ---\n`);
 
         for (const email of testEmails) {
             console.log(chalk.gray(`Sending '${email.title}'...`));
@@ -56,7 +65,7 @@ async function seedInbox() {
             });
 
             console.log(chalk.green(`✅ Sent: ${email.subject}`));
-            // Small delay to ensure order sometimes helps, but async await is fine.
+            await new Promise(resolve => setTimeout(resolve, 800));
         }
 
         console.log(chalk.bold.white("\n✅ Seed Complete! Check your inbox (and maybe Spam folder) in a few moments."));

@@ -1,9 +1,16 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { nylas } from '@/lib/nylas';
-import { Inbox, CheckCircle, Clock, AlertTriangle, Shield, Calendar, LogOut, Mail } from 'lucide-react';
+import { Inbox, CheckCircle, Clock, AlertTriangle, Shield, Calendar, LogOut, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
+import SweepButton from '@/components/SweepButton';
+import AutoSweepToggle from '@/components/AutoSweepToggle';
+import Link from 'next/link';
 
-export default async function Dashboard() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ page_token?: string }> }) {
+    const { page_token } = await searchParams;
     const cookieStore = await cookies();
     const grantId = cookieStore.get('nylas_grant_id')?.value;
 
@@ -11,14 +18,19 @@ export default async function Dashboard() {
         redirect('/');
     }
 
-    // Fetch some recent messages to show it's working
+    // Fetch messages with pagination
     let messages: any[] = [];
+    let nextCursor: string | null = null;
     try {
         const response = await nylas.messages.list({
             identifier: grantId,
-            queryParams: { limit: 5 },
+            queryParams: {
+                limit: 10,
+                pageToken: page_token
+            },
         });
         messages = response.data;
+        nextCursor = response.nextCursor || null;
     } catch (err) {
         console.error('Failed to fetch messages:', err);
     }
@@ -35,12 +47,31 @@ export default async function Dashboard() {
                         <p className="text-zinc-400 text-sm">Active & Monitoring</p>
                     </div>
                 </div>
-                <form action="/api/auth/logout" method="POST">
-                    <button className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
-                    </button>
-                </form>
+                <div className="flex items-center gap-6">
+                    {/* Pagination Controls */}
+                    <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/5">
+                        <span className="text-xs text-zinc-500 mr-2">Pagination</span>
+                        <Link
+                            href="/dashboard"
+                            className={`p-1 hover:bg-white/10 rounded-lg transition-colors ${!page_token ? 'opacity-30 pointer-events-none' : ''}`}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Link>
+                        <Link
+                            href={`/dashboard?page_token=${nextCursor}`}
+                            className={`p-1 hover:bg-white/10 rounded-lg transition-colors ${!nextCursor ? 'opacity-30 pointer-events-none' : ''}`}
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Link>
+                    </div>
+
+                    <form action="/api/auth/logout" method="POST">
+                        <button className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
+                            <LogOut className="h-4 w-4" />
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -68,9 +99,9 @@ export default async function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                        <button className="w-full mt-6 glow-button bg-primary py-3 rounded-xl font-semibold text-sm">
-                            Trigger Manual Sweep
-                        </button>
+
+                        <SweepButton />
+                        <AutoSweepToggle />
                     </div>
 
                     <div className="glass-card p-6">
@@ -97,18 +128,30 @@ export default async function Dashboard() {
                         </h2>
                         <div className="space-y-4">
                             {messages.length > 0 ? messages.map((msg) => (
-                                <div key={msg.id} className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl flex items-start justify-between border border-white/5">
+                                <div key={msg.id} className="group relative p-4 bg-white/5 hover:bg-white/10 transition-all rounded-2xl flex items-start justify-between border border-white/5">
                                     <div className="flex gap-4">
                                         <div className="h-10 w-10 flex-shrink-0 bg-primary/20 rounded-full flex items-center justify-center">
                                             <Mail className="h-5 w-5 text-primary" />
                                         </div>
                                         <div>
                                             <h4 className="font-semibold text-sm line-clamp-1">{msg.subject || '(No Subject)'}</h4>
-                                            <p className="text-xs text-zinc-500 mt-1">{msg.snippet?.substring(0, 60)}...</p>
+                                            <p className="text-xs text-zinc-500 mt-1">{msg.snippet?.substring(0, 80)}...</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <span className="text-[10px] px-2 py-1 bg-white/5 rounded-lg text-zinc-400">SCANNING</span>
+                                    </div>
+
+                                    {/* Hover Preview Tooltip */}
+                                    <div className="absolute left-0 top-full mt-2 w-full glass-card p-4 z-50 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-2xl border-primary/20">
+                                        <p className="text-xs text-zinc-300 leading-relaxed">
+                                            {msg.snippet || 'No preview available'}
+                                        </p>
+                                        {msg.body && (
+                                            <div className="mt-2 pt-2 border-t border-white/5 text-[10px] text-zinc-500 italic">
+                                                Snippet preview powered by AI Agent
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )) : (
@@ -134,3 +177,4 @@ export default async function Dashboard() {
         </div>
     );
 }
+
