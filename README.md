@@ -24,44 +24,39 @@
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Two Ways to Run
 
-### Prerequisites
-
-- Node.js installed
-- A [Nylas](https://dashboard.nylas.com/) account and Grant ID
-- A [Groq](https://console.groq.com/) API key
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/CeddDasma-14/inbox-zero-agent.git
-   cd inbox-zero-agent
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Configure your environment:
-   Create a `.env` file in the root directory and add:
-   ```env
-   NYLAS_API_KEY=your_nylas_key
-   NYLAS_API_URI=https://api.us.nylas.com
-   NYLAS_GRANT_ID=your_grant_id
-   GROQ_API_KEY=your_groq_key
-   USER_EMAIL=your_email@example.com
-   ```
-
-### Running the Agent
-
+### 1. 🖥️ CLI Mode (Local Script)
+The original autonomous background monitor.
 ```bash
 node index.js
 ```
 
-The agent will run an initial scan and then continue monitoring your inbox every 5 minutes.
+### 2. 🌐 Web Mode (Plug & Play)
+A modern, user-friendly interface for connecting any email account.
+
+**Setup Web App:**
+1. Navigate to the web directory:
+   ```bash
+   cd web
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure `.env.local`:
+   Copy `.env.local` and add your `NYLAS_CLIENT_ID` (Application ID) from the Nylas Dashboard.
+4. Run locally:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📁 Project Structure
+- `/web`: Next.js web application for end-users.
+- `index.js`: Original Node.js automation script.
+- `filter_config.json`: Shared classification logic.
 
 ---
 

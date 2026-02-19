@@ -1,0 +1,68 @@
+{
+    "categories": {
+        "URGENT_P0": {
+            "priority": 1,
+            "color": "red",
+            "keywords": [
+                "blocker",
+                "showstopper",
+                "critical path",
+                "P0",
+                "incident",
+                "outage"
+            ],
+            "intent": "Technical or project-stopping issues that need a reply in < 1 hour."
+        },
+        "ACTION_REQUIRED": {
+            "priority": 2,
+            "color": "yellow",
+            "keywords": [
+                "approval needed",
+                "sign-off",
+                "green light",
+                "deliverable",
+                "milestone",
+                "stakeholder"
+            ],
+            "intent": "Standard business operations where you are the decision-maker."
+        },
+        "CALENDAR_SYNC": {
+            "priority": 3,
+            "color": "blue",
+            "keywords": [
+                "touch base",
+                "alignment",
+                "sync",
+                "availability",
+                "reschedule",
+                "reoccurring"
+            ],
+            "intent": "Logistics and scheduling. Rarely needs a long reply, just a time."
+        },
+        "LOW_SIGNAL": {
+            "priority": 4,
+            "color": "gray",
+            "keywords": [
+                "digest",
+                "roundup",
+                "deep dive",
+                "insights",
+                "newsletter",
+                "waitlist"
+            ],
+            "intent": "Educational content or updates that don't require a reply."
+        },
+        "SECURITY_RISK": {
+            "priority": 0,
+            "color": "magenta",
+            "keywords": [
+                "verify now",
+                "account suspended",
+                "instant cash",
+                "DMARC failure",
+                "unusual login"
+            ],
+            "intent": "Phishing or scams. These should be flagged and never replied to."
+        }
+    }
+}
